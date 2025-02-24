@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown & Stopwatch</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script defer src="script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #282c36;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .timer {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .buttons button, .mode-toggle button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .buttons button:hover, .mode-toggle button:hover {
+            background-color: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Countdown & Stopwatch</h1>
+        <div class="timer">
+            <span id="minutes">00</span>:<span id="seconds">00</span>
+        </div>
+        <div class="buttons">
+            <button id="start">Start</button>
+            <button id="pause">Pause</button>
+            <button id="reset">Reset</button>
+        </div>
+        <div class="mode-toggle">
+            <button id="countdown">Countdown Mode</button>
+            <button id="stopwatch">Stopwatch Mode</button>
+        </div>
+    </div>
+    <script>
+        let timer;
+        let isRunning = false;
+        let countdownMode = false;
+        let seconds = 0;
+        let minutes = 0;
+        const minuteDisplay = document.getElementById("minutes");
+        const secondDisplay = document.getElementById("seconds");
+        document.getElementById("start").addEventListener("click", () => {
+            if (!isRunning) {
+                isRunning = true;
+                timer = setInterval(() => {
+                    if (countdownMode) {
+                        if (seconds === 0 && minutes === 0) {
+                            clearInterval(timer);
+                            isRunning = false;
+                            return;
+                        }
+                        if (seconds === 0) {
+                            minutes--;
+                            seconds = 59;
+                        } else {
+                            seconds--;
+                        }
+                    } else {
+                        seconds++;
+                        if (seconds === 60) {
+                            minutes++;
+                            seconds = 0;
+                        }
+                    }
+                    minuteDisplay.textContent = String(minutes).padStart(2, "0");
+                    secondDisplay.textContent = String(seconds).padStart(2, "0");
+                }, 1000);
+            }
+        });
+        document.getElementById("pause").addEventListener("click", () => {
+            clearInterval(timer);
+            isRunning = false;
+        });
+        document.getElementById("reset").addEventListener("click", () => {
+            clearInterval(timer);
+            isRunning = false;
+            seconds = 0;
+            minutes = 0;
+            minuteDisplay.textContent = "00";
+            secondDisplay.textContent = "00";
+        });
+        document.getElementById("countdown").addEventListener("click", () => {
+            countdownMode = true;
+            minutes = prompt("Enter minutes:") || 0;
+            seconds = 0;
+            minuteDisplay.textContent = String(minutes).padStart(2, "0");
+            secondDisplay.textContent = "00";
+        });
+        document.getElementById("stopwatch").addEventListener("click", () => {
+            countdownMode = false;
+            minutes = 0;
+            seconds = 0;
+            minuteDisplay.textContent = "00";
+            secondDisplay.textContent = "00";
+        });
+        gsap.from(".container", {opacity: 0, y: -50, duration: 1, ease: "power3.out"});
+        gsap.from("button", {opacity: 0, scale: 0.5, duration: 0.5, stagger: 0.2});
+    </script>
+</body>
+</html>
